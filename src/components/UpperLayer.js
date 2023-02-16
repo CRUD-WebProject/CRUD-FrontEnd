@@ -48,7 +48,7 @@ export default function UpperLayer() {
             if(window.confirm("로그아웃 하시겠습니까?")) {
                 login = false;
                 alert("로그아웃 되었습니다.");
-                navigate("/user/main");
+                navigate("/main");
             } else {
                 //동작 x
             }
@@ -58,11 +58,17 @@ export default function UpperLayer() {
         }
     }
 
+    function GoInfo() {
+        navigate(`/info`, {state:{
+            ID: "jiwoo"
+        }});
+    }
+
     return(
         <Container>
-            <Link to="/user/main"><Home src={home} alt="홈으로" /></Link>
+            <Link to="/main"><Home src={home} alt="홈으로" /></Link>
             <ProfileContainer>
-                <Profile src={profile} alt="내 프로필" />
+                <Profile src={profile} alt="내 프로필" onClick={GoInfo} />
                 <Log onClick = {diffFunc}>{diffLog}</Log>
             </ProfileContainer>
         </Container>

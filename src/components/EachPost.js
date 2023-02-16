@@ -1,4 +1,5 @@
 import React from 'react';
+import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 const Layer = styled.div`
@@ -33,9 +34,18 @@ const Date = styled.div`
 `
 
 export default function EachPost(props) {
+    const navigate = useNavigate();
+    const onView = () => {
+        navigate(`/view/${props.postID}`, {state:{
+            postID: props.postID
+        }});
+    }
     return(
         <Layer>
-            <Number>{props.num}</Number><Title>{props.title}</Title><Author>{props.author}</Author><Date>{props.date}</Date>
+            <Number>{props.postID}</Number>
+            <Title onClick={onView}>{props.title}</Title>
+            <Author>{props.id}</Author>
+            <Date>{props.date}</Date>
         </Layer>
     );
 }
