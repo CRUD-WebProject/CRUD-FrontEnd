@@ -4,15 +4,16 @@ import styled from 'styled-components';
 import UpperLayer from '../components/UpperLayer';
 
 const TitleContainer = styled.div`
-    position: absolute; left:300px; top: 100px; 
-    font-weight: 500; font-size: 50px; 
+    position: absolute; width: 560px; height: 80px; left:500px; top: 70px;
+    display:flex; justify-content: center; align-items: center; 
+    border-bottom: 1px solid black;
+    font-weight: 500; font-size: 40px; 
 `
 
 const SideBanner = styled.div`
-    position:absolute; left:50px; top:100px;
-    width:200px; height:600px;
-    border-right:2px solid gray;
-    
+    position:absolute; left:50px; top:200px;
+    width:200px; height:500px;
+    border-right:2px solid gray;  
 `
 
 const SideButton = styled.button`
@@ -39,57 +40,70 @@ const Id = styled.input`
     font-size:20px;
 `
 
+const NameLayer = styled.div`
+    position: absolute; left:0px; top:120px;
+    width:180px; height:50px;
+    font-size:30px; font-weight:600;
+    text-align:right;
+`
+
+const Name = styled.input`
+    position: absolute; left:200px; top:120px;
+    width:500px; height:50px;
+    font-size:20px;
+`
+
 const Id_pw = styled.input`
-    position: absolute; left:200px; top:140px;
+    position: absolute; left:200px; top:190px;
     width:500px; height:50px;
     font-size:20px;
 `
 
 const SexLayer = styled.div`
-    position: absolute; left:0px; top:140px;
+    position: absolute; left:0px; top:190px;
     width:180px; height:50px;
     font-size:30px; font-weight:600;
     text-align:right;
 `
 
 const Sex = styled.select`
-    position: absolute; left:200px; top:140px;
+    position: absolute; left:200px; top:190px;
     width:507px; height:50px;
     font-size:20px;
 `
 const AgeLayer = styled.div`
-    position: absolute; left:0px; top:230px;
+    position: absolute; left:0px; top:260px;
     width:180px; height:50px;
     font-size:30px; font-weight:600;
     text-align:right;
 `
 
 const Age = styled.input`
-    position: absolute; left:200px; top:230px;
+    position: absolute; left:200px; top:260px;
     width:500px; height:50px;
     font-size:20px;
 `
 const EmailLayer = styled.div`
-    position: absolute; left:0px; top:320px;
+    position: absolute; left:0px; top:330px;
     width:180px; height:50px;
     font-size:30px; font-weight:600;
     text-align:right;
 `
 
 const Email = styled.input`
-    position: absolute; left:200px; top:320px;
+    position: absolute; left:200px; top:330px;
     width:500px; height:50px;
     font-size:20px;
 `
 const PhoneLayer = styled.div`
-    position: absolute; left:0px; top:410px;
+    position: absolute; left:0px; top:400px;
     width:180px; height:50px;
     font-size:30px; font-weight:600;
     text-align:right;
 `
 
 const Phone = styled.input`
-    position: absolute; left:200px; top:410px;
+    position: absolute; left:200px; top:400px;
     width:500px; height:50px;
     font-size:20px;
 `
@@ -106,15 +120,13 @@ export default function UserPage() {
     const location = useLocation();
     const [info, setInfo] = useState({
         ID: "jiwoo",
+        name: "정지우",
         sex: "M",
         age: 25,
         email: "wldn990629@gmail.com",
         phone: "010-3757-2108"
     })
-    const {ID, sex, age, email, phone} = info;
-    var diffSex;
-    if(sex === "M") diffSex = "남";
-    else if(sex === "W") diffSex = "여";
+    const {ID, name, sex, age, email, phone} = info;
     const onChange = (e) => {
         const {value, name} = e.target;
         setInfo({
@@ -122,7 +134,7 @@ export default function UserPage() {
             [name] : value
         })
     }
-    const [selected, setSelected] = useState(diffSex);
+    const [selected, setSelected] = useState(sex);
     const onSelect = (e) => {
         setSelected(e.target.value);
     }
@@ -142,9 +154,9 @@ export default function UserPage() {
     else if(page === "pw" || page === "changepw") diffTitle = "비밀번호 변경";
 
     const [info_pw, setInfo_pw] = useState({
-        ID_pw: "", email_pw: "", phone_pw: ""
+        ID_pw: "", name_pw: ""
     })
-    const {ID_pw, email_pw, phone_pw} = info_pw;
+    const {ID_pw, name_pw} = info_pw;
     const onChange_pw = (e) => {
         const {value, name} = e.target;
         setInfo_pw({
@@ -154,7 +166,7 @@ export default function UserPage() {
     } 
     const goChangePW = () => {
         //백에서 response 받아온 결과에 따라 다르게 동작
-        if(ID_pw === "jiwoo") {
+        if(ID_pw === "jiwoo" && name_pw === "정지우") {
             setPage("changepw");
         } else {
             alert("일치하지 않는 회원정보입니다.");
@@ -163,7 +175,7 @@ export default function UserPage() {
     const [newPW, setNewPW] = useState({
         pw: "", check: ""
     })
-    const {pw, check} = newPW;
+    const {cur_pw, new_pw, check} = newPW;
     const onNewPW = (e) => {
         const {value, name} = e.target;
         setNewPW({
@@ -172,8 +184,9 @@ export default function UserPage() {
         })
     }
     const goNewPW = () => {
-        if(pw === check) {
-            if(window.confirm("비밀번호를 변경하시겠습니까?")) {
+        if(new_pw === check) {
+            if(cur_pw === new_pw) alert("기존 비밀번호와 같은 비밀번호입니다.")
+            else if(window.confirm("비밀번호를 변경하시겠습니까?")) {
                 alert("비밀번호가 변경되었습니다.");
                 setPage("profile");
             }
@@ -186,10 +199,12 @@ export default function UserPage() {
         if(page === "profile") {
             return (
                 <Userpage>
-                    <IdLayer>ID : </IdLayer>
+                    <IdLayer>아이디 : </IdLayer>
                     <Id name="ID" value={ID} onChange={onChange} />
+                    <NameLayer>이름: </NameLayer>
+                    <Name name="name" value={name} onChange={onChange} />
                     <SexLayer>성별 : </SexLayer>
-                    <Sex name="sex" defaultValue={diffSex} onChange={onSelect}>
+                    <Sex name="sex" defaultValue={selected} onChange={onSelect}>
                         <option value="M" key="M">남</option>
                         <option value="W" key="W">여</option>
                     </Sex>
@@ -206,12 +221,10 @@ export default function UserPage() {
             return (
                 <Userpage>
                     <p />회원정보 확인을 위해 정보를 입력하세요.
-                    <SexLayer>ID : </SexLayer>
+                    <SexLayer>아이디 : </SexLayer>
                     <Id_pw name="ID_pw" value={ID_pw} onChange={onChange_pw} />
-                    <AgeLayer>이메일 : </AgeLayer>
-                    <Age name="email_pw" value={email_pw} onChange={onChange_pw} />
-                    <EmailLayer>연락처 : </EmailLayer>
-                    <Email name="phone_pw" value={phone_pw} onChange={onChange_pw} />
+                    <EmailLayer>이름 : </EmailLayer>
+                    <Email name="name_pw" value={name_pw} onChange={onChange_pw} />
                     <Update value="changepw" onClick={goChangePW}>인증하기</Update>
                 </Userpage>
             )
@@ -219,8 +232,10 @@ export default function UserPage() {
             return(
                 <Userpage>
                     <p />새로운 비밀번호를 입력하세요.
-                    <SexLayer>새 비밀번호 : </SexLayer>
-                    <Id_pw type="password" name="pw" value={pw} onChange={onNewPW} />
+                    <SexLayer>기존 비밀번호 : </SexLayer>
+                    <Id_pw type="password" name="cur_pw" value={cur_pw} onChange={onNewPW} />
+                    <AgeLayer>새 비밀번호 : </AgeLayer>
+                    <Age type="password" name="new_pw" value={new_pw} onChange={onNewPW} />
                     <EmailLayer>비밀번호 확인 : </EmailLayer>
                     <Email type="password" name="check" value={check} onChange={onNewPW} />
                     <Update onClick={goNewPW}>변경하기</Update>
@@ -234,7 +249,7 @@ export default function UserPage() {
             <UpperLayer />
             <TitleContainer>{diffTitle}</TitleContainer>
             <SideBanner>
-                <p /><br /><br />
+                <p />
                 <SideButton value="profile" onClick={onChangePage}>내 정보</SideButton><p />
                 <SideButton value="pw" onClick={onChangePage}>비밀번호 변경</SideButton> <p />
             </SideBanner>

@@ -6,6 +6,9 @@ import ViewPage from './pages/Viewpage';
 import WritePage from './pages/Writepage';
 import UpdatePage from './pages/Updatepage';
 import UserPage from './pages/Userpage';
+import Joinpage from './pages/Joinpage';
+import FindID from './pages/FindID';
+import FindPW from './pages/FindPW';
 
 function App() {
   return (
@@ -18,6 +21,9 @@ function App() {
           <Route path={`/write`} element={<WritePage />}></Route>
           <Route path={`/update/:id`} element={<UpdatePage />}></Route>
           <Route path={`/info`} element={<UserPage />}></Route>
+          <Route path={`/join`} element={<Joinpage />}></Route>
+          <Route path={`/findID`} element={<FindID />}></Route>
+          <Route path={`/findPW`} element={<FindPW />}></Route>
         </Routes>
       </BrowserRouter>
     </div>
