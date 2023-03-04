@@ -42,7 +42,7 @@ export default function EachPost(props) {
     }
     return(
         <Layer>
-            <Number>{props.postID}</Number>
+            <Number>{props.num}</Number>
             <Title onClick={onView}>{props.title}</Title>
             <Author>{props.id}</Author>
             <Date>{props.date}</Date>

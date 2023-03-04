@@ -97,7 +97,7 @@ export default function EachBoard({category}) {
     ?.map((d) => {
         i=i+1;
         return(
-            <EachPost postID={d.postID} title={d.title} id={d.id} date={d.up_time} />
+            <EachPost num={i} postID={d.postID} title={d.title} id={d.id} date={d.up_time} />
         )
     });
 

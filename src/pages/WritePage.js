@@ -69,7 +69,7 @@ const user = "skmvmks4665";
 
 export default function WritePage() {
     const navigate = useNavigate();
-    const selectList = ["자유 게시판", "스포츠 게시판", "홍보 게시판"];
+    const selectList = ["자유", "스포츠", "홍보"];
     const [selected, setSelected] = useState("");
     const [Inputs, setInput] = useState({
         title: "", content: ""
