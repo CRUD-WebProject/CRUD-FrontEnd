@@ -79,7 +79,7 @@ export default function LoginPage() {
         })
     }
     const onLogin = () => {
-        if(id === "jiwoo" && pw === "jiwoo@0629") navigate(`/main`);
+        if(id === "skmvmks4665" && pw === "jiwoo@0629") navigate(`/main`);
         else alert("일치하지 않는 회원정보입니다.");
     }
 

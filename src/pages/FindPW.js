@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import styled from 'styled-components';
 
 const TitleContainer = styled.div`
@@ -49,6 +50,7 @@ export default function FindPW() {
     const {ID, Name} = input;
     const [change, setChange] = useState({ pw: "", checkPW: "" }) 
     const {pw, checkPW} = change;
+    const [curPW, setCurPW] = useState("");
     const onInput = (e) => {
         const {name, value} = e.target;
         setInput({
@@ -66,16 +68,35 @@ export default function FindPW() {
     const onMove = () => {
         if(ID === "") alert("아이디를 입력하세요.")
         else if(Name === "") alert("이름을 입력하세요.")
-        else if(ID === "jiwoo" && Name === "정지우") setPage("changePW")
-        else alert("일치하는 회원정보가 없습니다.")
+        else {
+            axios.get("user/findPW", {
+                params: { id: ID, name: Name }
+            })
+            .then((response) => {
+                if(response.data === "") alert("일치하는 회원정보가 없습니다.");
+                else {
+                    setCurPW(response.data);
+                    setPage("changePW");
+                }
+            })
+        }
     }
 
     const ChangePW = () => {
         if(pw === "" || checkPW === "") alert("비밀번호를 입력하세요.")
-        else if(pw !== checkPW) alert("입력한 두 비밀번호가 일치하지 않습니다.")
+        else if(pw === curPW) alert("기존의 비밀번호와 같습니다. 다시 입력하세요.")
+        else if(pw !== checkPW) alert("입력한 두 비밀번호가 일치하지 않습니다. 다시 입력하세요.")
         else {
-            alert(`비밀번호가 변경되었습니다.\n변경된 비밀번호는 '${pw}'입니다.\n로그인 화면으로 이동합니다.`)
-            navigate(`/`);
+            if(window.confirm("비밀번호를 변경하시겠습니까?")) {
+                axios.put("user/changePW", {
+                    id: ID, pw: pw
+                })
+                .then(() => {
+                    alert(`비밀번호가 변경되었습니다.\n변경된 비밀번호는 '${pw}'입니다.\n로그인 화면으로 이동합니다.`)
+                    navigate(`/`);
+                })
+                .catch((error) => {console.log(error)})
+            }
         }
     }
 

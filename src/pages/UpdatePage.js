@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {useNavigate, useLocation} from 'react-router-dom'
+import {useNavigate, useLocation} from 'react-router-dom';
+import axios from 'axios';
 import styled from 'styled-components';
 import UpperLayer from '../components/UpperLayer';
 
@@ -88,10 +89,23 @@ export default function UpdatePage() {
             if(title === "") alert("제목을 입력하세요.");
             else if(content === "") alert("내용을 입력하세요.");
             else {
-                alert("게시글이 수정되었습니다.");
-                navigate(`/view/${location.state.data.postID}`, {state:{
-                    postID: location.state.data.postID
-                }});
+                axios.put('/post/update', {
+                    id: location.state.data.id,
+                    title: title,
+                    category: selected,
+                    content: content
+                }, {
+                    params: { postID: location.state.data.postID }
+                }, {
+                    headers: { "Content-Type" : "application/json" }
+                })
+                .then(() => {
+                    alert("게시글이 수정되었습니다.");
+                    navigate(`/view/${location.state.data.postID}`, {state:{
+                        postID: location.state.data.postID
+                    }});
+                })
+                .catch((error) => {console.log(error)});
             }
         }
     }

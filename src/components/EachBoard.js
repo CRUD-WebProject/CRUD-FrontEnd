@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import styled from 'styled-components';
 import SearchBar from '../components/SearchBar';
@@ -60,26 +61,22 @@ const Paging = styled.div`
     display:flex; justify-content:center; margin-top:15px;
 `
 
-const dummyData = [
-    {postID: 1, title: "제목1", id: "작성자1", date: "2023-02-01"},
-    {postID: 2, title: "제목2", id: "작성자2", date: "2023-02-02"},
-    {postID: 3, title: "제목3", id: "작성자3", date: "2023-02-03"},
-    {postID: 4, title: "제목4", id: "작성자4", date: "2023-02-04"},
-    {postID: 5, title: "제목5", id: "작성자5", date: "2023-02-05"},
-    {postID: 6, title: "제목6", id: "작성자6", date: "2023-02-06"},
-    {postID: 7, title: "제목7", id: "작성자7", date: "2023-02-07"},
-    {postID: 8, title: "제목8", id: "작성자8", date: "2023-02-08"},
-    {postID: 9, title: "제목9", id: "작성자9", date: "2023-02-09"},
-    {postID: 10, title: "제목10", id: "작성자10", date: "2023-02-10"},
-    {postID: 11, title: "제목11", id: "작성자11", date: "2023-02-11"}
-];
-
-export default function EachBoard({type}) {
+export default function EachBoard({category}) {
     const navigate = useNavigate();
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
     const limit = 10; // posts가 보일 최대한의 갯수
     const offset = (page-1)*limit; // 시작점과 끝점을 구하는 offset
+    const [data, setData] = useState([]);
+    useEffect(()=>{
+        axios.get(`/post/list`, {
+            params: {category: category}
+        })
+        .then((response)=>{
+            setData(response.data);
+        })
+        .catch((error)=>console.log(error));
+    },[category])
 
     const onChange = (e) => {
         setSearch(e.currentTarget.value);
@@ -89,18 +86,18 @@ export default function EachBoard({type}) {
     }
 
     var diffTitle;
-    if(type === "all") diffTitle = "전체 게시판";
-    else if(type === "free") diffTitle = "자유 게시판";
-    else if(type === "sports") diffTitle = "스포츠 게시판";
-    else if(type === "promote") diffTitle = "홍보 게시판";
+    if(category === "전체") diffTitle = "전체 게시판";
+    else if(category === "자유") diffTitle = "자유 게시판";
+    else if(category === "스포츠") diffTitle = "스포츠 게시판";
+    else if(category === "홍보") diffTitle = "홍보 게시판";
 
     var i=0;
-    let eachPost = dummyData.filter((p) => p.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+    let eachPost = data?.filter((p) => p.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
     .reverse().slice(offset, offset+limit)
-    ?.map((data) => {
+    ?.map((d) => {
         i=i+1;
         return(
-            <EachPost postID={data.postID} title={data.title} id={data.id} date={data.date} />
+            <EachPost postID={d.postID} title={d.title} id={d.id} date={d.up_time} />
         )
     });
 
@@ -118,7 +115,7 @@ export default function EachBoard({type}) {
                     <Pagination 
                         activePage={page}
                         itemsCountPerPage={limit}
-                        totalItemsCount={dummyData.length}
+                        totalItemsCount={data.length}
                         pageRangeDisplayed={5}
                         prevPageText={"<"}
                         nextPageText={">"}
