@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom'
+import axios from 'axios';
 import styled from 'styled-components';
 import UpperLayer from '../components/UpperLayer';
 
@@ -64,6 +65,8 @@ const Write = styled.button`
     border-radius:5px; border:2px solid gray;
 `
 
+const user = "skmvmks4665";
+
 export default function WritePage() {
     const navigate = useNavigate();
     const selectList = ["자유 게시판", "스포츠 게시판", "홍보 게시판"];
@@ -87,8 +90,19 @@ export default function WritePage() {
             if(title === "") alert("제목을 입력하세요.");
             else if(content === "") alert("내용을 입력하세요.");
             else {
-                alert("게시글이 등록되었습니다.");
-                navigate('/main');
+                axios.post(`post/write`, {
+                    id: user,
+                    title: title,
+                    category: selected,
+                    content: content
+                }, {
+                    headers: { "Content-Type" : "application/json" }
+                })
+                .then(() => {
+                    alert("게시글이 등록되었습니다.");
+                    navigate('/main');
+                })
+                .catch((error) => {console.log(error)}) 
             }
         }
     }

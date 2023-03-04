@@ -16,10 +16,10 @@ const SideButton = styled.button`
 `
 
 export default function MainPage() {
-    const [type, setType] = useState("all");
+    const [category, setCategory] = useState("전체");
     
-    const diffType = (e) => {
-        setType(e.target.value);
+    const diffCategory = (e) => {
+        setCategory(e.target.value);
     }
 
     return(
@@ -27,12 +27,12 @@ export default function MainPage() {
             <UpperLayer />
             <SideBanner>
                 <p />
-                <SideButton value="all" onClick={diffType}>전체 게시판</SideButton><p />
-                <SideButton value="free" onClick={diffType}>자유 게시판</SideButton><p />
-                <SideButton value="sports" onClick={diffType}>스포츠 게시판</SideButton><p />
-                <SideButton value="promote" onClick={diffType}>홍보 게시판</SideButton><p />
+                <SideButton value="전체" onClick={diffCategory}>전체 게시판</SideButton><p />
+                <SideButton value="자유" onClick={diffCategory}>자유 게시판</SideButton><p />
+                <SideButton value="스포츠" onClick={diffCategory}>스포츠 게시판</SideButton><p />
+                <SideButton value="홍보" onClick={diffCategory}>홍보 게시판</SideButton><p />
             </SideBanner>
-            <EachBoard type={type} />
+            <EachBoard category={category} />
         </div>
     );
 }

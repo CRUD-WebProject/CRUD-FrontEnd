@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
+import axios from 'axios';
 import styled from 'styled-components';
 
 const TitleContainer = styled.div`
@@ -133,6 +134,7 @@ export default function Joinpage() {
         id: "", name: "", pw: "", checkpw: "", age: "", email: "", phone: ""
     })
     const {id, name, pw, checkpw, age, email, phone} = input;
+    const [dup, setDup] = useState("");
     const [sex, setSex] = useState("M");
     const onChange = (e) => {
         const {value, name} = e.target;
@@ -142,24 +144,42 @@ export default function Joinpage() {
         })
     }
     const checkDup = () => { //아이디 중복 확인
-        if(id === "jiwoo") alert("이미 존재하는 아이디입니다.")
-        else alert("사용 가능한 아이디입니다.")
+        axios.get("user/exist", {
+            params: { id: id }
+        })
+        .then((response)=>{ 
+            if(response.data) alert("이미 존재하는 아이디입니다.")
+            else alert("사용 가능한 아이디입니다.");
+            setDup(response.data) })
+        .catch((error)=>{console.log(error)})
     }
     const onSelect = (e) => {
         setSex(e.target.value)
     }
     const onJoin = () => {
         if(id === "") alert("아이디를 입력하세요.")
-        else if(id === "jiwoo") alert("이미 존재하는 아이디입니다.") //아이디 중복 확인
+        else if(dup) alert("이미 존재하는 아이디입니다.")
         else if(name === "") alert("이름을 입력하세요.")
         else if(pw === "" || checkpw === "") alert("비밀번호를 입력하세요.")
         else if(pw !== checkpw) alert("두 비밀번호가 서로 일치하지 않습니다.")
         else if(age === "") alert("나이를 입력하세요.")
         else {
             if(email === "" || phone === "") {
-                if(window.confirm("이메일 또는 전화번호를 입력하지 않을 경우, 비밀번호를 찾을 때 어려움이 있을 수 있습니다.\n 회원가입하시겠습니까?")) {
-                    alert("회원가입되었습니다.\n로그인화면으로 이동합니다.")
-                    navigate(`/`);
+                if(window.confirm("이메일 또는 전화번호를 입력하지 않을 경우, 비밀번호를 찾을 때 어려움이 있을 수 있습니다.\n회원가입하시겠습니까?")) {
+                    axios.post("user/enroll", {
+                        id: id,
+                        name: name,
+                        pw: pw,
+                        sex: sex,
+                        age: age,
+                        phone: phone,
+                        email: email
+                    })
+                    .then(() => {
+                        alert("회원가입되었습니다.\n로그인화면으로 이동합니다.")
+                        navigate(`/`);
+                    })
+                    .catch((error) => {console.log(error)})
                 }
             }
             else {

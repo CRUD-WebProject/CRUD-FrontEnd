@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
+import axios from 'axios';
 import styled from 'styled-components';
 import UpperLayer from '../components/UpperLayer';
 
@@ -109,7 +110,7 @@ const Phone = styled.input`
 `
 
 const Update = styled.button`
-    position: absolute; left:300px; top:500px;
+    position: absolute; left:430px; top:500px;
     width:100px; height:50px;
     color:gray; font-size:20px; font-weight:600;
     border-radius:5px; border:2px solid gray;
@@ -118,30 +119,51 @@ const Update = styled.button`
 export default function UserPage() {
     const navigate = useNavigate();
     const location = useLocation();
-    const [info, setInfo] = useState({
-        ID: "jiwoo",
-        name: "정지우",
-        sex: "M",
-        age: 25,
-        email: "wldn990629@gmail.com",
-        phone: "010-3757-2108"
-    })
-    const {ID, name, sex, age, email, phone} = info;
+    const [info, setInfo] = useState([]);
+    const [selected, setSelected] = useState("");
+    useEffect(()=>{
+        axios.get('user/info', {
+            params: {id: location.state.id}
+        })
+        .then((response)=>{{
+            setInfo(response.data)};
+            setSelected(response.data.sex);
+        })
+        .catch((error)=>{console.log(error)})
+    }, []);
+
     const onChange = (e) => {
         const {value, name} = e.target;
         setInfo({
             ...info,
             [name] : value
         })
-    }
-    const [selected, setSelected] = useState(sex);
+    } 
     const onSelect = (e) => {
         setSelected(e.target.value);
     }
+
     const onUpdate = () => {
         if(window.confirm("정보를 수정하시겠습니까?")) {
-            alert("정보가 수정되었습니다.");
-            navigate(`/info`);
+            axios.put('user/update', {
+                id: info.id,
+                sex: selected,
+                age: info.age,
+                phone: info.phone,
+                email: info.email,
+                name: info.name
+            }, {
+                params: { id: location.state.id }
+            }, {
+                headers: { "Content-Type" : "application/json" }
+            })
+            .then(() => {
+                alert("정보가 수정되었습니다.");
+                navigate(`/info`, {state:{
+                    id: info.id
+                }});
+            })
+            .catch((error) => {console.log(error)})
         }
     }
     const onChangePage = (e) => {
@@ -154,9 +176,9 @@ export default function UserPage() {
     else if(page === "pw" || page === "changepw") diffTitle = "비밀번호 변경";
 
     const [info_pw, setInfo_pw] = useState({
-        ID_pw: "", name_pw: ""
+        id_pw: "", name_pw: ""
     })
-    const {ID_pw, name_pw} = info_pw;
+    const {id_pw, name_pw} = info_pw;
     const onChange_pw = (e) => {
         const {value, name} = e.target;
         setInfo_pw({
@@ -164,16 +186,22 @@ export default function UserPage() {
             [name] : value
         })
     } 
-    const goChangePW = () => {
-        //백에서 response 받아온 결과에 따라 다르게 동작
-        if(ID_pw === "jiwoo" && name_pw === "정지우") {
-            setPage("changepw");
-        } else {
-            alert("일치하지 않는 회원정보입니다.");
-        }
+    const [curPW, setCurPW] = useState("");
+    const goChangePW = (e) => {
+        axios.get("user/findPW", {
+            params: { id:id_pw, name:name_pw }
+        })
+        .then((response) => {
+            if(response.data === "") alert("일치하지 않는 회원정보입니다.");
+            else {
+                setPage(e.target.value);
+                setCurPW(response.data);
+            }
+        })    
+        .catch((error) => {console.log(error)})
     }
     const [newPW, setNewPW] = useState({
-        pw: "", check: ""
+        cur_pw: "", new_pw: "", check: ""
     })
     const {cur_pw, new_pw, check} = newPW;
     const onNewPW = (e) => {
@@ -185,10 +213,18 @@ export default function UserPage() {
     }
     const goNewPW = () => {
         if(new_pw === check) {
-            if(cur_pw === new_pw) alert("기존 비밀번호와 같은 비밀번호입니다.")
+            if(cur_pw !== curPW) alert("기존 비밀번호의 값이 옳지 않습니다. 다시 입력하세요.")
+            else if(cur_pw === new_pw) alert("기존 비밀번호와 같은 비밀번호입니다. 다시 입력하세요.")
             else if(window.confirm("비밀번호를 변경하시겠습니까?")) {
-                alert("비밀번호가 변경되었습니다.");
-                setPage("profile");
+                axios.put("user/changePW", {
+                    id: id_pw, 
+                    pw: new_pw 
+                })
+                .then(() => {
+                    alert("비밀번호가 변경되었습니다.");
+                    setPage("profile");
+                })
+                .catch((error) => {console.log(error)})
             }
         } else {
             alert("입력한 두 비밀번호가 일치하지 않습니다. 다시 입력하세요.")
@@ -200,29 +236,28 @@ export default function UserPage() {
             return (
                 <Userpage>
                     <IdLayer>아이디 : </IdLayer>
-                    <Id name="ID" value={ID} onChange={onChange} />
+                    <Id name="id" value={info.id} onChange={onChange} />
                     <NameLayer>이름: </NameLayer>
-                    <Name name="name" value={name} onChange={onChange} />
+                    <Name name="name" value={info.name} onChange={onChange} />
                     <SexLayer>성별 : </SexLayer>
                     <Sex name="sex" defaultValue={selected} onChange={onSelect}>
                         <option value="M" key="M">남</option>
                         <option value="W" key="W">여</option>
                     </Sex>
                     <AgeLayer>나이 : </AgeLayer>
-                    <Age name="age" value={age} onChange={onChange} />
+                    <Age name="age" value={info.age} onChange={onChange} />
                     <EmailLayer>이메일 : </EmailLayer>
-                    <Email name="email" value={email} onChange={onChange} />
+                    <Email name="email" value={info.email} onChange={onChange} />
                     <PhoneLayer>연락처 : </PhoneLayer>
-                    <Phone name="phone" value={phone} onChange={onChange} />
+                    <Phone name="phone" value={info.phone} onChange={onChange} />
                     <Update onClick={onUpdate}>정보수정</Update>
                 </Userpage>
             );
         } else if(page === "pw") {
             return (
                 <Userpage>
-                    <p />회원정보 확인을 위해 정보를 입력하세요.
                     <SexLayer>아이디 : </SexLayer>
-                    <Id_pw name="ID_pw" value={ID_pw} onChange={onChange_pw} />
+                    <Id_pw name="id_pw" value={id_pw} onChange={onChange_pw} />
                     <EmailLayer>이름 : </EmailLayer>
                     <Email name="name_pw" value={name_pw} onChange={onChange_pw} />
                     <Update value="changepw" onClick={goChangePW}>인증하기</Update>
@@ -231,7 +266,6 @@ export default function UserPage() {
         } else if(page === "changepw") {
             return(
                 <Userpage>
-                    <p />새로운 비밀번호를 입력하세요.
                     <SexLayer>기존 비밀번호 : </SexLayer>
                     <Id_pw type="password" name="cur_pw" value={cur_pw} onChange={onNewPW} />
                     <AgeLayer>새 비밀번호 : </AgeLayer>

@@ -60,7 +60,7 @@ export default function UpperLayer() {
 
     function GoInfo() {
         navigate(`/info`, {state:{
-            ID: "jiwoo"
+            id: "skmvmks4665"
         }});
     }
 

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
+import axios from 'axios';
 import styled from 'styled-components';
 
 const TitleContainer = styled.div`
@@ -73,10 +74,16 @@ export default function FindID() {
         else if(email === "") alert("이메일을 입력하세요.")
         else if(phone === "") alert("연락처를 입력하세요.")
         else {
-            if(name === "정지우" && email === "wldn990629@gmail.com" && phone === "010-3757-2108") {
-                alert("회원님의 아이디는 'jiwoo'입니다.\n로그인 화면으로 이동합니다.")
-                navigate(`/`);
-            } else alert("일치하는 회원정보가 없습니다.")
+            axios.get("user/findID", {
+                params: {name: name, email: email, phone: phone}
+            })
+            .then((response) => {
+                if(response.data === "") alert("일치하는 회원정보가 없습니다.")
+                else {
+                    alert(`회원님의 아이디는 ${response.data}입니다. 로그인 화면으로 이동합니다.`)
+                    navigate('/');
+                }
+            })
         }
     }
     return(
