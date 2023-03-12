@@ -75,7 +75,8 @@ export default function FindID() {
         else if(phone === "") alert("연락처를 입력하세요.")
         else {
             axios.get("user/findID", {
-                params: {name: name, email: email, phone: phone}
+                params: {name: name, email: email, phone: phone},
+                headers: {Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken")}
             })
             .then((response) => {
                 if(response.data === "") alert("일치하는 회원정보가 없습니다.")

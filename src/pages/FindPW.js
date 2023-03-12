@@ -70,7 +70,8 @@ export default function FindPW() {
         else if(Name === "") alert("이름을 입력하세요.")
         else {
             axios.get("user/findPW", {
-                params: { id: ID, name: Name }
+                params: { id: ID, name: Name },
+                headers: {Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken")}
             })
             .then((response) => {
                 if(response.data === "") alert("일치하는 회원정보가 없습니다.");
@@ -90,6 +91,11 @@ export default function FindPW() {
             if(window.confirm("비밀번호를 변경하시겠습니까?")) {
                 axios.put("user/changePW", {
                     id: ID, pw: pw
+                }, { 
+                    headers: {
+                        Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken"),
+                        "Content-Type" : "application/json"
+                    }
                 })
                 .then(() => {
                     alert(`비밀번호가 변경되었습니다.\n변경된 비밀번호는 '${pw}'입니다.\n로그인 화면으로 이동합니다.`)

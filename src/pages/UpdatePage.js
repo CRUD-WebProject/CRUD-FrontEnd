@@ -68,8 +68,8 @@ const Write = styled.button`
 export default function UpdatePage() {
     const navigate = useNavigate();
     const location = useLocation();
-    const selectList = ["자유 게시판", "스포츠 게시판", "홍보 게시판"];
-    const [selected, setSelected] = useState("");
+    const selectList = ["자유", "스포츠", "홍보"];
+    const [selected, setSelected] = useState(location.state.data.category);
     const [Inputs, setInput] = useState({
         title: location.state.data.title, content: location.state.data.content
     });
@@ -95,9 +95,11 @@ export default function UpdatePage() {
                     category: selected,
                     content: content
                 }, {
-                    params: { postID: location.state.data.postID }
-                }, {
-                    headers: { "Content-Type" : "application/json" }
+                    params: { postID: location.state.data.postID },
+                    headers: { 
+                        "Authorization" : localStorage.getItem("grantType") + localStorage.getItem("accessToken"),                    
+                        "Content-Type" : "application/json"
+                    }
                 })
                 .then(() => {
                     alert("게시글이 수정되었습니다.");

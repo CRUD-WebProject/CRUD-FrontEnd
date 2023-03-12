@@ -70,7 +70,7 @@ const user = "skmvmks4665";
 export default function WritePage() {
     const navigate = useNavigate();
     const selectList = ["자유", "스포츠", "홍보"];
-    const [selected, setSelected] = useState("");
+    const [selected, setSelected] = useState("자유");
     const [Inputs, setInput] = useState({
         title: "", content: ""
     });
@@ -96,7 +96,10 @@ export default function WritePage() {
                     category: selected,
                     content: content
                 }, {
-                    headers: { "Content-Type" : "application/json" }
+                    headers: { 
+                        "Content-Type" : "application/json",
+                        Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken")
+                    }
                 })
                 .then(() => {
                     alert("게시글이 등록되었습니다.");
@@ -112,7 +115,7 @@ export default function WritePage() {
             <TitleContainer>게시글 작성</TitleContainer>
             <Container>
                 <TitleLayer>제목</TitleLayer>
-                <Title type="text" name="title" value={title} placeholder=" 제목" onChange={onChange} />
+                <Title type="text" name="title" value={title} placeholder="제목" onChange={onChange} />
                 <CategoryLayer>카테고리</CategoryLayer>
                 <Category onChange={onSelect} value={selected}>
                     {
@@ -122,7 +125,7 @@ export default function WritePage() {
                     }
                 </Category>
                 <ContentLayer>내용</ContentLayer>
-                <Content name="content" value={content} placeholder=" 내용" onChange={onChange} />
+                <Content name="content" value={content} placeholder="내용" onChange={onChange} />
                 <Write onClick={onWrite}>글 작성</Write>
             </Container>
         </>

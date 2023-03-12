@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
+import axios from 'axios';
 import styled from 'styled-components';
 
 const TitleContainer = styled.div`
@@ -72,29 +73,38 @@ export default function LoginPage() {
     })
     const {id, pw} = input;
     const onChange = (e) => {
-        const {value, name} = e.target;
+        const {name, value} = e.target;
         setInput({
             ...input,
             [name]: value
         })
     }
+    
     const onLogin = () => {
-        if(id === "skmvmks4665" && pw === "jiwoo@0629") navigate(`/main`);
-        else alert("일치하지 않는 회원정보입니다.");
+        axios.post("/user/login", {
+            id: id,
+            pw: pw
+        }).then((response) => {
+            localStorage.setItem("id", id);
+            localStorage.setItem("accessToken", response.data.accessToken)
+            localStorage.setItem("grantType", response.data.grantType)
+            alert("로그인 되었습니다.")
+            navigate('/main');
+        }).catch((error) => {console.log(error)})
     }
 
     return(
         <div>
             <TitleContainer>로 그 인</TitleContainer>
             <Container>
-                <IdLayer>아이디: </IdLayer>
-                <Id name="id" value={id} alt="ID" onChange={onChange} />
-                <PwLayer>비밀번호: </PwLayer>
-                <Pw type="password" name="pw" value={pw} alt="PW" onChange={onChange}/>
-                <Login onClick={onLogin}>로그인</Login>
-                <Join><Link to={`/join`} style={{ textDecoration: "none", color: "gray" }}>회원가입</Link></Join>
-                <FindID><Link to={`/findID`} style={{ textDecoration: "none", color: "gray" }}>아이디찾기</Link></FindID>
-                <FindPW><Link to={`/findPW`} style={{ textDecoration: "none", color: "gray" }}>비밀번호찾기</Link></FindPW>    
+                    <IdLayer>아이디: </IdLayer>
+                    <Id type="text" name="id" value={id} placeholder="아이디" onChange={onChange} />
+                    <PwLayer>비밀번호: </PwLayer>
+                    <Pw type="password" name="pw" value={pw} placeholder="비밀번호" onChange={onChange} />
+                    <Login onClick={onLogin}>로그인</Login>
+                    <Join><Link to={`/join`} style={{ textDecoration: "none", color: "gray" }}>회원가입</Link></Join>
+                    <FindID><Link to={`/findID`} style={{ textDecoration: "none", color: "gray" }}>아이디찾기</Link></FindID>
+                    <FindPW><Link to={`/findPW`} style={{ textDecoration: "none", color: "gray" }}>비밀번호찾기</Link></FindPW> 
             </Container>
         </div> 
     );

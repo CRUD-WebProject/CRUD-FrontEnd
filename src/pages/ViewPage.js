@@ -66,6 +66,13 @@ const GoUpdate = styled.button`
     border-radius:5px; border:2px solid gray;
 `
 
+const GoDelete = styled.button`
+    position: absolute; top:-50px; left:950px;
+    width:100px; height:50px;
+    color:gray; font-size:20px; font-weight:600;
+    border-radius:5px; border:2px solid gray;
+`
+
 const GoMain = styled.button`
     position: absolute; top:550px; left:650px;
     width:100px; height:50px;
@@ -110,9 +117,8 @@ const CommentLayer2 = styled.div`
 const CommentList = styled.div`
     position:absolute; top:850px; left:0px;
     display: grid; flex-direction: row;
+    padding-bottom:50px;
 `
-
-const user = "skmvmks4665";
 
 export default function ViewPage() {
     const navigate = useNavigate();
@@ -122,14 +128,16 @@ export default function ViewPage() {
     const [commentList, setCommentList] = useState([]);
     useEffect(()=>{
         axios.get('/post/get', {
-            params: {postID: location.state.postID}
+            params: {postID: location.state.postID},
+            headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") }
         })
         .then((response)=>{setPost(response.data)})
         .catch((error)=>{console.log(error)})
     },[location.state.postID])
     useEffect(()=>{
         axios.get('/comment/get', {
-            params: {postID: location.state.postID}
+            params: {postID: location.state.postID},
+            headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") }
         })
         .then((response)=>{setCommentList(response.data)})
         .catch((error)=>{console.log(error)})
@@ -142,10 +150,24 @@ export default function ViewPage() {
     const onMain = () => {
         navigate('/main');
     }
+    const onDelete = () => {
+        if(window.confirm("게시글을 삭제하시겠습니까?")) {
+            alert("게시글이 삭제되었습니다.")
+            axios.delete("/post/delete", {
+                params: { postID: location.state.postID },
+                headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") }
+            })
+            .then(navigate('/main'))
+            .catch((error)=>{console.log(error)})
+        } else {
+            
+        }
+    }
     const diffButton = () => {
-        if(user === post.id) {
+        if(localStorage.getItem("id") === post.id) {
             return(
                 <div>
+                    <GoDelete onClick={onDelete}>글 삭제</GoDelete>
                     <Link to={`/update/${location.state.postID}`} state={{
                         data: post
                     }}><GoUpdate>글 수정</GoUpdate></Link>
@@ -158,16 +180,20 @@ export default function ViewPage() {
             );
         }
     }
+
     const onEnter = () => {
         if(comment === "") alert("댓글을 입력하세요.");
         else {
             alert("댓글이 입력되었습니다.");
             axios.post('/comment/write', {
                 postID: location.state.postID,
-                id: user,
+                id: localStorage.getItem("id"),
                 content: comment
             }, { 
-                headers: { "Content-Type" : "application/json" }
+                headers: {
+                    "Content-Type" : "application/json",
+                    Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken")
+                }
             })
             .then(window.location.reload())
             .catch((error)=>{console.log(error)})
@@ -194,7 +220,7 @@ export default function ViewPage() {
                     {
                         commentList.map((item) => {
                             return(
-                                <EachComment id={item.id} content={item.content} date={item.com_time} />
+                                <EachComment comment={item} />
                             )
                         })
                     }
