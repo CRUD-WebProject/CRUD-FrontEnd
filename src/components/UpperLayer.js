@@ -61,7 +61,7 @@ export default function UpperLayer() {
 
     function GoInfo() {
         navigate(`/info`, {state:{
-            id: "skmvmks4665"
+            id: localStorage.getItem("id")
         }});
     }
 
