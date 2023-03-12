@@ -123,7 +123,8 @@ export default function UserPage() {
     const [selected, setSelected] = useState("");
     useEffect(()=>{
         axios.get('user/info', {
-            params: {id: location.state.id}
+            params: {id: location.state.id},
+            headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") },
         })
         .then((response)=>{{
             setInfo(response.data)};
@@ -155,7 +156,10 @@ export default function UserPage() {
             }, {
                 params: { id: location.state.id }
             }, {
-                headers: { "Content-Type" : "application/json" }
+                headers: { 
+                    "Content-Type" : "application/json",
+                    Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken")
+                }
             })
             .then(() => {
                 alert("정보가 수정되었습니다.");
@@ -189,7 +193,8 @@ export default function UserPage() {
     const [curPW, setCurPW] = useState("");
     const goChangePW = (e) => {
         axios.get("user/findPW", {
-            params: { id:id_pw, name:name_pw }
+            params: { id:id_pw, name:name_pw },
+            headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") }
         })
         .then((response) => {
             if(response.data === "") alert("일치하지 않는 회원정보입니다.");
@@ -201,9 +206,9 @@ export default function UserPage() {
         .catch((error) => {console.log(error)})
     }
     const [newPW, setNewPW] = useState({
-        cur_pw: "", new_pw: "", check: ""
+        new_pw: "", check: ""
     })
-    const {cur_pw, new_pw, check} = newPW;
+    const {new_pw, check} = newPW;
     const onNewPW = (e) => {
         const {value, name} = e.target;
         setNewPW({
@@ -213,12 +218,15 @@ export default function UserPage() {
     }
     const goNewPW = () => {
         if(new_pw === check) {
-            if(cur_pw !== curPW) alert("기존 비밀번호의 값이 옳지 않습니다. 다시 입력하세요.")
-            else if(cur_pw === new_pw) alert("기존 비밀번호와 같은 비밀번호입니다. 다시 입력하세요.")
-            else if(window.confirm("비밀번호를 변경하시겠습니까?")) {
+            if(window.confirm("비밀번호를 변경하시겠습니까?")) {
                 axios.put("user/changePW", {
                     id: id_pw, 
                     pw: new_pw 
+                }, {
+                    headers: { 
+                        Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken"),
+                        "Content-Type" : "application/json"
+                    }
                 })
                 .then(() => {
                     alert("비밀번호가 변경되었습니다.");
@@ -266,10 +274,8 @@ export default function UserPage() {
         } else if(page === "changepw") {
             return(
                 <Userpage>
-                    <SexLayer>기존 비밀번호 : </SexLayer>
-                    <Id_pw type="password" name="cur_pw" value={cur_pw} onChange={onNewPW} />
-                    <AgeLayer>새 비밀번호 : </AgeLayer>
-                    <Age type="password" name="new_pw" value={new_pw} onChange={onNewPW} />
+                    <SexLayer>새 비밀번호 : </SexLayer>
+                    <Id_pw type="password" name="new_pw" value={new_pw} onChange={onNewPW} />
                     <EmailLayer>비밀번호 확인 : </EmailLayer>
                     <Email type="password" name="check" value={check} onChange={onNewPW} />
                     <Update onClick={goNewPW}>변경하기</Update>

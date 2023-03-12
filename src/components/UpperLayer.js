@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import home from '../images/Home.jpg';
@@ -34,19 +34,20 @@ const Log = styled.button`
     border-radius:5px; border:2px solid gray;
 `
 
-var login = true;
-var diffLog;
-
 export default function UpperLayer() {
     const navigate = useNavigate();
-    
-    if(login) diffLog = "로그아웃";
-    else diffLog = "로그인"; 
+    const [diffLog, setDiffLog] = useState("로그인");
+    useEffect(() => {
+        if(localStorage.getItem("accessToken") !== "") setDiffLog("로그아웃")
+        else setDiffLog("로그인") 
+    }, [localStorage.getItem("accessToken")])
     
     function diffFunc() {
-        if(login) {
+        if(localStorage.getItem("accessToken") !== "") {
             if(window.confirm("로그아웃 하시겠습니까?")) {
-                login = false;
+                localStorage.setItem("id", "");
+                localStorage.setItem("accessToken", "");
+                localStorage.setItem("grantType", "");
                 alert("로그아웃 되었습니다.");
                 navigate("/main");
             } else {

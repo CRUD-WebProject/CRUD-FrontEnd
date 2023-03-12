@@ -184,8 +184,20 @@ export default function Joinpage() {
             }
             else {
                 if(window.confirm("회원가입하시겠습니까?")) {
-                    alert("회원가입되었습니다.\n로그인화면으로 이동합니다.")
-                    navigate(`/`);
+                    axios.post("user/enroll", {
+                        id: id,
+                        name: name,
+                        pw: pw,
+                        sex: sex,
+                        age: age,
+                        phone: phone,
+                        email: email
+                    })
+                    .then(() => {
+                        alert("회원가입되었습니다.\n로그인화면으로 이동합니다.")
+                        navigate(`/`);
+                    })
+                    .catch((error) => {console.log(error)})
                 }
             }
         }
@@ -195,25 +207,25 @@ export default function Joinpage() {
         <div>
             <TitleContainer>회원가입</TitleContainer>
             <IdLayer>아이디: </IdLayer>
-            <Id name="id" value={id} alt="아이디" onChange={onChange} />
+            <Id name="id" value={id} placeholder="아이디" onChange={onChange} />
             <Dup onClick={checkDup}>중복확인</Dup>
             <NameLayer>이름: </NameLayer>
-            <Name name="name" value={name} alt="이름" onChange={onChange} />
+            <Name name="name" value={name} placeholder="이름" onChange={onChange} />
             <PwLayer>비밀번호: </PwLayer>
-            <Pw type="password" name="pw" value={pw} alt="비밀번호" onChange={onChange} />
+            <Pw type="password" name="pw" value={pw} placeholder="비밀번호" onChange={onChange} />
             <CheckPwLayer>비밀번호 확인: </CheckPwLayer>
-            <CheckPw type="password" name="checkpw" value={checkpw} alt="비밀번호 확인" onChange={onChange} />
+            <CheckPw type="password" name="checkpw" value={checkpw} placeholder="비밀번호 확인" onChange={onChange} />
             <SexLayer>성별: </SexLayer>
             <Sex name="sex" value={sex} onChange={onSelect}>
                 <option value="M" key="M">남</option>
                 <option value="W" key="W">여</option>
             </Sex>
             <AgeLayer>나이: </AgeLayer>
-            <Age name="age" value={age} alt="나이" onChange={onChange} />
+            <Age name="age" value={age} placeholder="나이" onChange={onChange} />
             <EmailLayer>이메일(선택): </EmailLayer>
-            <Email name="email" value={email} alt="이메일" onChange={onChange} />
+            <Email name="email" value={email} placeholder="이메일" onChange={onChange} />
             <PhoneLayer>연락처(선택): </PhoneLayer>
-            <Phone name="phone" value={phone} alt="연락처 (xxx-xxxx-xxxx 꼴로 입력해주세요)" onChange={onChange} />
+            <Phone name="phone" value={phone} placeholder   ="연락처 (xxx-xxxx-xxxx 꼴로 입력해주세요)" onChange={onChange} />
             <Join onClick={onJoin}>회원가입</Join>
         </div>
     );

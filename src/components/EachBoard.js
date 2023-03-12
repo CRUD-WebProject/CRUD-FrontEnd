@@ -70,7 +70,8 @@ export default function EachBoard({category}) {
     const [data, setData] = useState([]);
     useEffect(()=>{
         axios.get(`/post/list`, {
-            params: {category: category}
+            params: { category: category },
+            headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") }
         })
         .then((response)=>{
             setData(response.data);
@@ -97,7 +98,7 @@ export default function EachBoard({category}) {
     ?.map((d) => {
         i=i+1;
         return(
-            <EachPost num={i} postID={d.postID} title={d.title} id={d.id} date={d.up_time} />
+            <EachPost num={i} postID={d.postID} title={d.title} id={d.id} date={d.up_time.replace('T', ' ')} />
         )
     });
 
