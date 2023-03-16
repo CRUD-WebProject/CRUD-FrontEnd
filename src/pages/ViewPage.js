@@ -60,62 +60,63 @@ const Content = styled.textarea`
 `
 
 const GoUpdate = styled.button`
-    position: absolute; top:550px; left:450px;
-    width:100px; height:50px;
-    color:gray; font-size:20px; font-weight:600;
-    border-radius:5px; border:2px solid gray;
-`
-
-const GoDelete = styled.button`
-    position: absolute; top:-50px; left:950px;
-    width:100px; height:50px;
+    position: absolute; top:550px; left:400px;
+    width:100px; height:55px;
     color:gray; font-size:20px; font-weight:600;
     border-radius:5px; border:2px solid gray;
 `
 
 const GoMain = styled.button`
-    position: absolute; top:550px; left:650px;
-    width:100px; height:50px;
+    position: absolute; top:550px; left:550px;
+    width:100px; height:55px;
     color:gray; font-size:20px; font-weight:600;
     border-radius:5px; border:2px solid gray;
 `
 
 const GoMain2 = styled.button`
-    position: absolute; top:550px; left:550px; 
-    width:100px; height:50px;
+    position: absolute; top:550px; left:700px;
+    width:100px; height:55px;
     color:gray; font-size:20px; font-weight:600;
     border-radius:5px; border:2px solid gray;
 `
 
+const Like = styled.button`
+    position: absolute; top:550px; left:950px;
+    width:100px; height:55px;
+    color:gray; font-size:20px; font-weight:600;
+    border-radius:5px; 
+    border: ${props => props.like ? '3px solid blue' : '2px solid gray'};
+`
+
 const CommentLayer = styled.div`
-    position: absolute; top:620px; left:0px;
+    position: absolute; top:700px; left:0px;
     width:120px;
     font-size:30px; font-weight:600;
     border-bottom:1px solid black;
 `
 
 const EnterComment = styled.textarea`
-    position: absolute; top:670px; left:0px;
+    position: absolute; top:750px; left:0px;
     width:1050px; height:100px;
     font-size:16px;
 `
 
 const AddComment = styled.button`
-    position: absolute; top:620px; left:990px;
+    position: absolute; top:700px; left:990px;
     width:70px; height: 40px;
     font-size:20px; font-weight:600;
     border: 2px solid gray; border-radius:10px;
 `
 
 const CommentLayer2 = styled.div`
-    position: absolute; top:800px; left:0px;
+    position: absolute; top:900px; left:0px;
     width:120px;
     font-size:30px; font-weight:600;
     border-bottom:1px solid black;
 `
 
 const CommentList = styled.div`
-    position:absolute; top:850px; left:0px;
+    position:absolute; top:950px; left:0px;
     display: grid; flex-direction: row;
     padding-bottom:50px;
 `
@@ -126,6 +127,7 @@ export default function ViewPage() {
     
     const [post, setPost] = useState([]);
     const [commentList, setCommentList] = useState([]);
+    const [like, setLike] = useState(false);
     useEffect(()=>{
         api.get('/post/get', {
             params: {postID: location.state.postID},
@@ -133,7 +135,7 @@ export default function ViewPage() {
         })
         .then((response)=>{setPost(response.data)})
         .catch((error)=>{console.log(error)})
-    },[location.state.postID])
+    },[location.state.postID, like])
     useEffect(()=>{
         api.get('/comment/get', {
             params: {postID: location.state.postID},
@@ -142,6 +144,46 @@ export default function ViewPage() {
         .then((response)=>{setCommentList(response.data)})
         .catch((error)=>{console.log(error)})
     },[location.state.postID])
+    useEffect(()=>{
+        api.get('/likes/check', {
+            params: { postID: location.state.postID, id: localStorage.getItem("id") },
+            headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") }
+        })
+        .then((response) => { setLike(response.data) })
+        .catch((error) => {console.log(error)})
+    }, [like])
+
+    const onLike = () => {
+        if(like === false) {
+            setLike(true);
+            api.post('/post/like', {
+                postID: location.state.postID,
+                id: localStorage.getItem("id")
+            }, {
+                headers: { 
+                    "Content-Type" : "application/json",
+                    Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") 
+                }
+            })
+            .then()
+            .catch((error) => {console.log(error)});
+        }
+        else {
+            setLike(false);
+            api.post('/post/like_cancel', {
+                postID: location.state.postID,
+                id: localStorage.getItem("id")
+            }, {
+                headers: { 
+                    "Content-Type" : "application/json",
+                    Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") 
+                }
+            })
+            .then()
+            .catch((error) => {console.log(error)});
+        }
+    }
+    
     
     const [comment, setComment] = useState("");
     const onChange = (e) => {
@@ -163,20 +205,25 @@ export default function ViewPage() {
             
         }
     }
+
     const diffButton = () => {
         if(localStorage.getItem("id") === post.id) {
             return(
                 <div>
-                    <GoDelete onClick={onDelete}>글 삭제</GoDelete>
+                    <Like onClick={onLike} like={like}>좋아요👍 {post.likes}</Like>
                     <Link to={`/update/${location.state.postID}`} state={{
                         data: post
                     }}><GoUpdate>글 수정</GoUpdate></Link>
-                    <GoMain onClick={onMain}>목록으로</GoMain>
+                    <GoMain onClick={onDelete}>글 삭제</GoMain>
+                    <GoMain2 onClick={onMain}>목록으로</GoMain2>
                 </div>
             );
         } else {
             return (
-                <div><GoMain2 onClick={onMain}>목록으로</GoMain2></div>
+                <div>
+                    <Like>좋아요</Like>
+                    <GoMain onClick={onMain}>목록으로</GoMain>
+                </div>
             );
         }
     }
