@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../JWT/customAPI';
 import Pagination from 'react-js-pagination';
 import styled from 'styled-components';
 import SearchBar from '../components/SearchBar';
@@ -69,7 +69,7 @@ export default function EachBoard({category}) {
     const offset = (page-1)*limit; // 시작점과 끝점을 구하는 offset
     const [data, setData] = useState([]);
     useEffect(()=>{
-        axios.get(`/post/list`, {
+        api.get(`/post/list`, {
             params: { category: category },
             headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") }
         })
@@ -98,7 +98,7 @@ export default function EachBoard({category}) {
     ?.map((d) => {
         i=i+1;
         return(
-            <EachPost num={i} postID={d.postID} title={d.title} id={d.id} date={d.up_time.replace('T', ' ')} />
+            <EachPost key={d.postID} num={i} postID={d.postID} title={d.title} id={d.id} date={d.up_time.replace('T', ' ')} />
         )
     });
 

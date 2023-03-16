@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Link, useNavigate, useLocation} from 'react-router-dom';
-import axios from 'axios';
+import api from '../JWT/customAPI';
 import styled from 'styled-components';
 import UpperLayer from '../components/UpperLayer';
 import EachComment from '../components/EachComment';
@@ -127,7 +127,7 @@ export default function ViewPage() {
     const [post, setPost] = useState([]);
     const [commentList, setCommentList] = useState([]);
     useEffect(()=>{
-        axios.get('/post/get', {
+        api.get('/post/get', {
             params: {postID: location.state.postID},
             headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") }
         })
@@ -135,7 +135,7 @@ export default function ViewPage() {
         .catch((error)=>{console.log(error)})
     },[location.state.postID])
     useEffect(()=>{
-        axios.get('/comment/get', {
+        api.get('/comment/get', {
             params: {postID: location.state.postID},
             headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") }
         })
@@ -153,7 +153,7 @@ export default function ViewPage() {
     const onDelete = () => {
         if(window.confirm("게시글을 삭제하시겠습니까?")) {
             alert("게시글이 삭제되었습니다.")
-            axios.delete("/post/delete", {
+            api.delete("/post/delete", {
                 params: { postID: location.state.postID },
                 headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") }
             })
@@ -185,7 +185,7 @@ export default function ViewPage() {
         if(comment === "") alert("댓글을 입력하세요.");
         else {
             alert("댓글이 입력되었습니다.");
-            axios.post('/comment/write', {
+            api.post('/comment/write', {
                 postID: location.state.postID,
                 id: localStorage.getItem("id"),
                 content: comment

@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
+import { getCookie, removeCookie } from '../cookie/cookie';
 import home from '../images/Home.jpg';
 import profile from '../images/Profile.jpg'
 
@@ -48,6 +49,7 @@ export default function UpperLayer() {
                 localStorage.setItem("id", "");
                 localStorage.setItem("accessToken", "");
                 localStorage.setItem("grantType", "");
+                removeCookie("refreshToken");
                 alert("로그아웃 되었습니다.");
                 navigate("/main");
             } else {

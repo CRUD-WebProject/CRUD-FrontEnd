@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
+import { setCookie, getCookie } from '../cookie/cookie';
 
 const TitleContainer = styled.div`
     position: absolute; width: 560px; height: 80px; left:500px; top: 70px;
@@ -88,6 +89,8 @@ export default function LoginPage() {
             localStorage.setItem("id", id);
             localStorage.setItem("accessToken", response.data.accessToken)
             localStorage.setItem("grantType", response.data.grantType)
+            localStorage.setItem("accessTokenExpireTime", response.data.accessTokenExpireTime)
+            setCookie("refreshToken", response.data.refreshToken)
             alert("로그인 되었습니다.")
             navigate('/main');
         }).catch((error) => {console.log(error)})
