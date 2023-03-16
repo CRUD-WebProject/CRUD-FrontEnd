@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import axios from 'axios';
+import api from '../JWT/customAPI';
 import styled from 'styled-components';
 
 const TitleContainer = styled.div`
@@ -74,7 +74,7 @@ export default function FindID() {
         else if(email === "") alert("이메일을 입력하세요.")
         else if(phone === "") alert("연락처를 입력하세요.")
         else {
-            axios.get("user/findID", {
+            api.get("user/findID", {
                 params: {name: name, email: email, phone: phone},
                 headers: {Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken")}
             })

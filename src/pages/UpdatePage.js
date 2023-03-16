@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
-import axios from 'axios';
+import api from '../JWT/customAPI';
 import styled from 'styled-components';
 import UpperLayer from '../components/UpperLayer';
 
@@ -89,7 +89,7 @@ export default function UpdatePage() {
             if(title === "") alert("제목을 입력하세요.");
             else if(content === "") alert("내용을 입력하세요.");
             else {
-                axios.put('/post/update', {
+                api.put('/post/update', {
                     id: location.state.data.id,
                     title: title,
                     category: selected,

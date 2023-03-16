@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../JWT/customAPI';
 import styled from 'styled-components';
 
 const TitleContainer = styled.div`
@@ -69,7 +69,7 @@ export default function FindPW() {
         if(ID === "") alert("아이디를 입력하세요.")
         else if(Name === "") alert("이름을 입력하세요.")
         else {
-            axios.get("user/findPW", {
+            api.get("user/findPW", {
                 params: { id: ID, name: Name },
                 headers: {Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken")}
             })
@@ -89,7 +89,7 @@ export default function FindPW() {
         else if(pw !== checkPW) alert("입력한 두 비밀번호가 일치하지 않습니다. 다시 입력하세요.")
         else {
             if(window.confirm("비밀번호를 변경하시겠습니까?")) {
-                axios.put("user/changePW", {
+                api.put("user/changePW", {
                     id: ID, pw: pw
                 }, { 
                     headers: {

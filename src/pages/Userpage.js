@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
-import axios from 'axios';
+import api from '../JWT/customAPI';
 import styled from 'styled-components';
 import UpperLayer from '../components/UpperLayer';
 
@@ -122,7 +122,7 @@ export default function UserPage() {
     const [info, setInfo] = useState([]);
     const [selected, setSelected] = useState("");
     useEffect(()=>{
-        axios.get('user/info', {
+        api.get('user/info', {
             params: {id: location.state.id},
             headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") },
         })
@@ -143,10 +143,13 @@ export default function UserPage() {
     const onSelect = (e) => {
         setSelected(e.target.value);
     }
+    var defaultSex;
+    if(selected === "M") defaultSex = "남";
+    else defaultSex = "여";
 
     const onUpdate = () => {
         if(window.confirm("정보를 수정하시겠습니까?")) {
-            axios.put('user/update', {
+            api.put('user/update', {
                 id: info.id,
                 sex: selected,
                 age: info.age,
@@ -192,7 +195,7 @@ export default function UserPage() {
     } 
     const [curPW, setCurPW] = useState("");
     const goChangePW = (e) => {
-        axios.get("user/findPW", {
+        api.get("user/findPW", {
             params: { id:id_pw, name:name_pw },
             headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") }
         })
@@ -219,7 +222,7 @@ export default function UserPage() {
     const goNewPW = () => {
         if(new_pw === check) {
             if(window.confirm("비밀번호를 변경하시겠습니까?")) {
-                axios.put("user/changePW", {
+                api.put("user/changePW", {
                     id: id_pw, 
                     pw: new_pw 
                 }, {
@@ -248,7 +251,7 @@ export default function UserPage() {
                     <NameLayer>이름: </NameLayer>
                     <Name name="name" value={info.name} onChange={onChange} />
                     <SexLayer>성별 : </SexLayer>
-                    <Sex name="sex" defaultValue={selected} onChange={onSelect}>
+                    <Sex name="sex" defaultValue={defaultSex} onChange={onSelect}>
                         <option value="M" key="M">남</option>
                         <option value="W" key="W">여</option>
                     </Sex>

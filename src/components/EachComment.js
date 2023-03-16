@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import axios from 'axios';
+import api from '../JWT/customAPI';
 import styled from 'styled-components';
 
 const Comment = styled.div`
@@ -59,7 +59,7 @@ export default function EachComment ({comment}) {
     }
     const onUpdate = () => {
         if(window.confirm("댓글을 수정하시겠습니까?")) {
-            axios.put("/comment/update", {
+            api.put("/comment/update", {
                 comID: comment.comID,
                 postID: comment.postID,
                 id: comment.id,
@@ -81,7 +81,7 @@ export default function EachComment ({comment}) {
     }
     const onDelete = () => {
         if(window.confirm("댓글을 삭제하시겠습니까?")) {
-            axios.delete("/comment/delete", {
+            api.delete("/comment/delete", {
                 params: { postID: comment.postID, comID: comment.comID},
                 headers: { Authorization: localStorage.getItem("grantType") + localStorage.getItem("accessToken") }
             })

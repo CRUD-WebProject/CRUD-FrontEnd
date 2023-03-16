@@ -32,7 +32,7 @@ export default function MainPage() {
                 <SideButton value="스포츠" onClick={diffCategory}>스포츠 게시판</SideButton><p />
                 <SideButton value="홍보" onClick={diffCategory}>홍보 게시판</SideButton><p />
             </SideBanner>
-            <EachBoard category={category} />
+            <EachBoard key={category} category={category} />
         </div>
     );
 }

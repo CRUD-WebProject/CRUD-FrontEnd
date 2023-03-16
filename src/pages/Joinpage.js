@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import axios from 'axios';
+import api from '../JWT/customAPI';
 import styled from 'styled-components';
 
 const TitleContainer = styled.div`
@@ -144,7 +144,7 @@ export default function Joinpage() {
         })
     }
     const checkDup = () => { //아이디 중복 확인
-        axios.get("user/exist", {
+        api.get("user/exist", {
             params: { id: id }
         })
         .then((response)=>{ 
@@ -166,7 +166,7 @@ export default function Joinpage() {
         else {
             if(email === "" || phone === "") {
                 if(window.confirm("이메일 또는 전화번호를 입력하지 않을 경우, 비밀번호를 찾을 때 어려움이 있을 수 있습니다.\n회원가입하시겠습니까?")) {
-                    axios.post("user/enroll", {
+                    api.post("user/enroll", {
                         id: id,
                         name: name,
                         pw: pw,
@@ -184,7 +184,7 @@ export default function Joinpage() {
             }
             else {
                 if(window.confirm("회원가입하시겠습니까?")) {
-                    axios.post("user/enroll", {
+                    api.post("user/enroll", {
                         id: id,
                         name: name,
                         pw: pw,
